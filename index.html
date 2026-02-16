@@ -5,7 +5,310 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plataforma de Comunicación Avanzada | Seo & Hari</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <style>
+        /* =========================================
+           1. SISTEMA DE VARIABLES Y TEMAS (CSS)
+           ========================================= */
+        :root {
+            /* Colores traslúcidos para dejar ver el fondo */
+            --p-bg: rgba(244, 249, 255, 0.72); 
+            --p-white: rgba(255, 255, 255, 0.85);
+            --p-accent: #74b9ff;
+            --p-accent-dark: #5a96d4;
+            --p-accent-soft: rgba(227, 240, 255, 0.7);
+            --p-text-main: #4a667d;
+            --p-text-light: #9dbcd4;
+            --p-border: rgba(225, 239, 255, 0.6);
+            --p-shadow-sm: 0 4px 12px rgba(173, 201, 235, 0.1);
+            --p-shadow-lg: 0 20px 50px rgba(173, 201, 235, 0.3);
+            --p-radius-sm: 12px;
+            --p-radius-lg: 24px;
+            --p-transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            --p-danger: #ff7675;
+        }
+
+        /* =========================================
+           2. RESET Y FONDO DE PANTALLA INTEGRADO
+           ========================================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            /* LA IMAGEN DE FONDO EN TODA LA PANTALLA */
+            background-image: url('3d782e7557e5e8d5e633ebe2722db786.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            
+            color: var(--p-text-main);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* CAPAS TRASLÚCIDAS (Glassmorphism) */
+        #gatekeeper, .sidebar, .mail-list, .mail-viewer, #calendar-view {
+            background: var(--p-bg) !important;
+            backdrop-filter: blur(12px); /* Nitidez sutil sobre el fondo */
+        }
+
+        button { cursor: pointer; border: none; transition: var(--p-transition); }
+
+        /* =========================================
+           3. PANTALLA DE ACCESO (GATEKEEPER)
+           ========================================= */
+        #gatekeeper {
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 60px;
+        }
+
+        .gate-title {
+            font-weight: 200;
+            font-size: 32px;
+            letter-spacing: 8px;
+            color: var(--p-text-main);
+            text-transform: uppercase;
+        }
+
+        .gate-users { display: flex; gap: 120px; }
+
+        .user-selector {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+            transition: var(--p-transition);
+        }
+
+        .user-selector:hover { transform: translateY(-20px); }
+
+        .gate-avatar-frame {
+            width: 220px; height: 220px;
+            border-radius: 50%;
+            background: var(--p-white);
+            padding: 10px;
+            box-shadow: var(--p-shadow-lg);
+            border: 2px solid var(--p-border);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .gate-avatar-frame img {
+            position: absolute;
+            background: var(--p-accent-soft);
+            width: 100%; top: 0; left: 0;
+        }
+
+        .gate-name {
+            font-size: 24px; font-weight: 300;
+            letter-spacing: 4px; color: var(--p-text-main);
+        }
+
+        /* =========================================
+           4. LAYOUT PRINCIPAL (GRID SYSTEM)
+           ========================================= */
+        #main-container {
+            display: none;
+            grid-template-columns: 320px 450px 1fr;
+            width: 100vw;
+            height: 100vh;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+
+        /* =========================================
+           5. COLUMNA 1: SIDEBAR
+           ========================================= */
+        .sidebar {
+            border-right: 1px solid var(--p-border);
+            display: flex;
+            flex-direction: column;
+            padding: 40px 30px;
+            z-index: 10;
+        }
+
+        .identity-card {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            background: var(--p-white);
+            border-radius: var(--p-radius-lg);
+            margin-bottom: 50px;
+            cursor: pointer;
+            box-shadow: var(--p-shadow-sm);
+        }
+
+        .pfp-sidebar-frame {
+            width: 55px; height: 55px;
+            border-radius: 50%;
+            overflow: hidden;
+            position: relative;
+            border: 3px solid var(--p-white);
+            flex-shrink: 0;
+            background: #eee;
+        }
+
+        .pfp-sidebar-frame img { position: absolute; width: 100%; top: 0; left: 0; }
+
+        .identity-card .info p:first-child { font-weight: 800; font-size: 16px; }
+        .identity-card .info p:last-child { font-size: 12px; color: var(--p-text-light); }
+
+        .btn-compose {
+            background: var(--p-accent);
+            color: white;
+            padding: 20px;
+            border-radius: var(--p-radius-sm);
+            font-weight: 700;
+            box-shadow: 0 10px 25px rgba(116, 185, 255, 0.4);
+            margin-bottom: 15px;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+
+        .btn-compose:hover { background: var(--p-accent-dark); transform: scale(1.02); }
+
+        .nav-menu { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+        .nav-item {
+            padding: 16px 20px;
+            border-radius: var(--p-radius-sm);
+            color: var(--p-text-main);
+            display: flex; justify-content: space-between; align-items: center;
+            transition: var(--p-transition); cursor: pointer;
+        }
+
+        .nav-item:hover { background: var(--p-accent-soft); }
+        .nav-item.active { background: var(--p-white); color: var(--p-accent); font-weight: 700; box-shadow: var(--p-shadow-sm); }
+
+        .badge { background: var(--p-accent); color: white; padding: 4px 10px; border-radius: 20px; font-size: 11px; }
+
+        /* =========================================
+           6. COLUMNA 2: MAIL LIST
+           ========================================= */
+        .mail-list { border-right: 1px solid var(--p-border); display: flex; flex-direction: column; }
+        .list-header { padding: 35px 30px; border-bottom: 1px solid var(--p-border); }
+        .search-container input {
+            width: 100%; padding: 15px 20px; border-radius: var(--p-radius-sm);
+            border: 1px solid var(--p-border); background: var(--p-white); outline: none; font-size: 14px;
+        }
+
+        .stream-container { flex: 1; overflow-y: auto; }
+        .mail-card {
+            padding: 30px; border-bottom: 1px solid var(--p-border);
+            transition: var(--p-transition); border-left: 0px solid var(--p-accent); position: relative;
+        }
+        .mail-card:hover { background: rgba(255, 255, 255, 0.4); }
+        .mail-card.unread { background: rgba(255, 255, 255, 0.3); border-left-width: 8px; }
+        .mail-card.active { background: var(--p-white); }
+
+        .btn-delete-item {
+            position: absolute; right: 20px; top: 25px;
+            color: var(--p-danger); background: none; opacity: 0; font-size: 18px;
+        }
+        .mail-card:hover .btn-delete-item { opacity: 1; }
+
+        .card-from { font-weight: 800; font-size: 15px; display: block; margin-bottom: 5px; }
+        .card-time { float: right; font-size: 11px; color: var(--p-text-light); font-weight: 400; }
+        .card-subject { font-size: 16px; font-weight: 400; color: var(--p-text-main); margin-bottom: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-preview { font-size: 13px; color: var(--p-text-light); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+        /* =========================================
+           7. COLUMNA 3: VIEWER
+           ========================================= */
+        .mail-viewer { display: flex; flex-direction: column; overflow-y: auto; }
+        .empty-view {
+            flex: 1; display: flex; flex-direction: column; align-items: center;
+            justify-content: center; color: var(--p-text-light); gap: 20px;
+        }
+
+        .viewer-content { display: none; }
+        .view-header { padding: 80px 100px; border-bottom: 1px solid var(--p-border); }
+        .view-subject { font-size: 42px; font-weight: 200; line-height: 1.2; margin-bottom: 50px; }
+        .view-meta { display: flex; align-items: center; gap: 25px; }
+        .v-avatar-frame {
+            width: 70px; height: 70px; border-radius: 50%;
+            overflow: hidden; position: relative; border: 4px solid var(--p-white);
+        }
+        .v-avatar-frame img { position: absolute; width: 100%; }
+        .view-body { padding: 80px 100px; font-size: 18px; line-height: 2.4; color: var(--p-text-main); }
+        .view-body img { max-width: 100%; border-radius: 20px; margin: 40px 0; box-shadow: var(--p-shadow-lg); }
+
+        /* =========================================
+           8. EDITOR PROFESIONAL
+           ========================================= */
+        .editor-modal {
+            position: fixed; bottom: 0; right: 80px; width: 750px; height: 750px;
+            background: var(--p-white); border-radius: 30px 30px 0 0;
+            box-shadow: 0 30px 100px rgba(0,0,0,0.2); display: none;
+            flex-direction: column; border: 1px solid var(--p-border);
+            z-index: 5000; transform: translateY(100%); transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+        .editor-modal.active { display: flex; transform: translateY(0); }
+        .editor-header {
+            background: var(--p-accent); color: white; padding: 25px 40px;
+            display: flex; justify-content: space-between; align-items: center; border-radius: 30px 30px 0 0;
+        }
+
+        .toolbar {
+            padding: 15px 30px; background: rgba(250, 252, 255, 0.9);
+            border-bottom: 1px solid var(--p-border); display: flex; gap: 15px; flex-wrap: wrap;
+        }
+        .tool { padding: 8px 14px; background: white; border: 1px solid var(--p-border); border-radius: 8px; font-size: 13px; font-weight: 600; }
+
+        .editor-inputs { padding: 20px 40px; }
+        .editor-inputs input { width: 100%; padding: 15px 0; border: none; border-bottom: 1px solid var(--p-border); background: transparent; outline: none; font-size: 16px; }
+        .editor-content { flex: 1; padding: 40px; outline: none; overflow-y: auto; font-size: 17px; line-height: 1.8; }
+        .editor-footer { padding: 30px 40px; border-top: 1px solid var(--p-border); display: flex; justify-content: flex-end; }
+
+        /* =========================================
+           9. SECCIÓN CALENDARIO
+           ========================================= */
+        #calendar-view { display: none; padding: 60px 100px; flex: 1; overflow-y: auto; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; margin-top: 50px; }
+        .event-card {
+            background: var(--p-white); padding: 40px; border-radius: var(--p-radius-lg);
+            border: 1px solid var(--p-border); position: relative; box-shadow: var(--p-shadow-sm);
+        }
+        .countdown-container { display: flex; gap: 15px; margin-top: 30px; }
+        .count-box { flex: 1; background: var(--p-white); padding: 15px; border-radius: 15px; text-align: center; box-shadow: var(--p-shadow-sm); }
+        .count-val { font-size: 24px; font-weight: 800; color: var(--p-accent); display: block; }
+        .count-label { font-size: 10px; text-transform: uppercase; color: var(--p-text-light); }
+
+        /* =========================================
+           10. MODALES (PERFIL & EVENTOS)
+           ========================================= */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(173, 201, 235, 0.3);
+            backdrop-filter: blur(10px); z-index: 10000; display: none;
+            align-items: center; justify-content: center;
+        }
+        .modal-box { background: var(--p-white); width: 500px; border-radius: 30px; box-shadow: var(--p-shadow-lg); overflow: hidden; }
+        .profile-adjust-box {
+            width: 250px; height: 250px; border-radius: 50%; overflow: hidden;
+            margin: 30px auto; border: 5px solid var(--p-accent-soft); position: relative; cursor: move;
+        }
+        #pfp-preview { position: absolute; }
+
+        /* SCROLLBARS */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--p-accent-soft); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--p-accent); }
+
+    </style>
 </head>
 <body>
 
@@ -141,6 +444,247 @@
         <div class="editor-footer"><button class="btn-compose" onclick="logicSendMail()">Enviar Correo</button></div>
     </div>
 
-    <script type="module" src="script.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = { 
+            apiKey: "AIzaSyDmFyhPz3bd1UzEZdcouQW_dgoPUbdQE04", 
+            databaseURL: "https://love-look-default-rtdb.firebaseio.com", 
+            projectId: "love-look" 
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let currentUserId = null;
+        let currentFolder = 'inbox';
+        let mailDbCache = {};
+        let profileDbCache = {};
+        let activeMailId = null;
+
+        // --- MOTOR PERFILES ---
+        function applyPfpStyles(imgElement, pData, frameSize) {
+            if(!pData || !imgElement) return;
+            const zoom = pData.zoom || 100;
+            const top = pData.top || 0;
+            const left = pData.left || 0;
+            const scale = (frameSize / 250);
+            imgElement.style.width = zoom + "%";
+            imgElement.style.top = (top * scale) + "px";
+            imgElement.style.left = (left * scale) + "px";
+        }
+
+        function logicSyncProfiles() {
+            onValue(ref(db, 'profiles'), (snapshot) => {
+                profileDbCache = snapshot.val() || {};
+                ['seo', 'hari'].forEach(id => {
+                    const img = document.getElementById(`gate-pfp-${id}`);
+                    const nameSpan = document.getElementById(`gate-name-${id}`);
+                    if(profileDbCache[id]) {
+                        if(profileDbCache[id].pfp) img.src = profileDbCache[id].pfp;
+                        if(profileDbCache[id].alias) nameSpan.innerText = profileDbCache[id].alias;
+                        applyPfpStyles(img, profileDbCache[id], 220);
+                    }
+                });
+                if(currentUserId) {
+                    const sideImg = document.getElementById('user-current-pfp');
+                    const sideName = document.getElementById('user-current-name');
+                    if(profileDbCache[currentUserId]) {
+                        if(profileDbCache[currentUserId].pfp) sideImg.src = profileDbCache[currentUserId].pfp;
+                        sideName.innerText = profileDbCache[currentUserId].alias || currentUserId;
+                        applyPfpStyles(sideImg, profileDbCache[currentUserId], 55);
+                    }
+                }
+            });
+        }
+
+        // --- SESIÓN ---
+        window.bootSession = (id) => {
+            currentUserId = id;
+            localStorage.setItem('love_user', id);
+            const gate = document.getElementById('gatekeeper');
+            const main = document.getElementById('main-container');
+            gate.style.opacity = "0";
+            setTimeout(() => {
+                gate.style.display = "none";
+                main.style.display = "grid";
+                setTimeout(() => main.style.opacity = "1", 50);
+                document.getElementById('e-target').value = `Para: ${id === 'seo' ? 'hari' : 'seo'}`;
+                logicSyncMails();
+                logicSyncEvents();
+                logicSyncProfiles();
+            }, 600);
+        };
+
+        window.sessionLogout = () => { localStorage.removeItem('love_user'); location.reload(); };
+
+        // --- MAILS ---
+        function logicSyncMails() {
+            onValue(ref(db, 'mails_vProfessional'), (snapshot) => {
+                mailDbCache = snapshot.val() || {};
+                logicRenderStream();
+            });
+        }
+
+        function logicRenderStream(searchQuery = "") {
+            const listElement = document.getElementById('stream-render');
+            listElement.innerHTML = "";
+            let unreadTotal = 0;
+            const mailArray = Object.keys(mailDbCache).map(id => ({...mailDbCache[id], id})).reverse();
+
+            mailArray.filter(mail => {
+                const isRecipient = (mail.to === currentUserId);
+                const isSender = (mail.from === currentUserId);
+                if(isRecipient && !mail.read && !mail.trash) unreadTotal++;
+                let folderMatch = false;
+                if(currentFolder === 'inbox') folderMatch = (isRecipient && !mail.trash);
+                if(currentFolder === 'sent') folderMatch = (isSender && !mail.trash);
+                if(currentFolder === 'trash') folderMatch = (mail.trash && (isRecipient || isSender));
+                return folderMatch && (mail.subject.toLowerCase().includes(searchQuery.toLowerCase()) || mail.from.toLowerCase().includes(searchQuery.toLowerCase()));
+            }).forEach(mail => {
+                const card = document.createElement('div');
+                card.className = `mail-card ${(!mail.read && mail.to === currentUserId) ? 'unread' : ''} ${activeMailId === mail.id ? 'active' : ''}`;
+                card.innerHTML = `<button class="btn-delete-item" onclick="logicHandleTrash(event, '${mail.id}', ${mail.trash})">${mail.trash ? '×' : '🗑'}</button>
+                    <span class="card-time">${mail.date.split(',')[0]}</span>
+                    <span class="card-from">${mail.from === currentUserId ? 'Para: ' + (profileDbCache[mail.to]?.alias || mail.to) : (profileDbCache[mail.from]?.alias || mail.from)}</span>
+                    <div class="card-subject">${mail.subject}</div>
+                    <div class="card-preview">${mail.body.replace(/<[^>]*>/g, '')}</div>`;
+                card.onclick = () => logicOpenMail(mail);
+                listElement.appendChild(card);
+            });
+            document.getElementById('badge-inbox').innerText = unreadTotal;
+        }
+
+        function logicOpenMail(mail) {
+            activeMailId = mail.id;
+            if(mail.to === currentUserId && !mail.read) update(ref(db, `mails_vProfessional/${mail.id}`), { read: true });
+            document.getElementById('view-placeholder').style.display = 'none';
+            document.getElementById('view-active').style.display = 'block';
+            document.getElementById('v-subject').innerText = mail.subject;
+            document.getElementById('v-sender').innerText = `De: ${profileDbCache[mail.from]?.alias || mail.from}`;
+            document.getElementById('v-date').innerText = mail.date;
+            document.getElementById('v-body').innerHTML = mail.body;
+            const vImg = document.getElementById('v-avatar');
+            vImg.src = profileDbCache[mail.from]?.pfp || '';
+            applyPfpStyles(vImg, profileDbCache[mail.from], 70);
+            logicRenderStream();
+        }
+
+        window.logicHandleTrash = (e, id, inTrash) => {
+            e.stopPropagation();
+            if(inTrash) { if(confirm("¿Eliminar para siempre?")) remove(ref(db, `mails_vProfessional/${id}`)); }
+            else { update(ref(db, `mails_vProfessional/${id}`), { trash: true }); }
+        };
+
+        window.logicSendMail = () => {
+            const subject = document.getElementById('e-subject').value;
+            const body = document.getElementById('e-body').innerHTML;
+            if(!body.trim() || body === '<br>') return;
+            push(ref(db, 'mails_vProfessional'), {
+                from: currentUserId, to: (currentUserId === 'seo' ? 'hari' : 'seo'),
+                subject: subject || "(Sin Asunto)", body, date: new Date().toLocaleString(), read: false, trash: false
+            }).then(() => { uiToggleEditor(false); document.getElementById('e-subject').value = ""; document.getElementById('e-body').innerHTML = ""; });
+        };
+
+        // --- CALENDARIO ---
+        function logicSyncEvents() {
+            onValue(ref(db, 'events_vProf'), (snapshot) => {
+                const events = snapshot.val() || {};
+                const render = document.getElementById('calendar-render');
+                render.innerHTML = "";
+                Object.keys(events).forEach(id => {
+                    const ev = events[id];
+                    const card = document.createElement('div');
+                    card.className = "event-card";
+                    card.innerHTML = `<div style="display:flex; justify-content:space-between;"><b>${ev.title}</b><button onclick="logicDeleteEvent('${id}')" style="background:none; color:red;">×</button></div><p style="font-size:12px; color:var(--p-text-light); margin-top:5px;">${ev.date}</p><div class="countdown-container" id="timer-${id}"></div>`;
+                    render.appendChild(card);
+                    startEventTimer(id, ev.date);
+                });
+            });
+        }
+
+        function startEventTimer(id, targetDate) {
+            const updateTimer = () => {
+                const diff = new Date(targetDate).getTime() - new Date().getTime();
+                const el = document.getElementById(`timer-${id}`);
+                if(!el) return;
+                if(diff < 0) { el.innerHTML = "¡Hoy es el evento!"; return; }
+                const d = Math.floor(diff / (1000*60*60*24));
+                const h = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+                const m = Math.floor((diff % (1000*60*60)) / (1000*60));
+                el.innerHTML = `<div class="count-box"><span class="count-val">${d}</span><span class="count-label">Días</span></div><div class="count-box"><span class="count-val">${h}</span><span class="count-label">Horas</span></div><div class="count-box"><span class="count-val">${m}</span><span class="count-label">Min</span></div>`;
+            };
+            updateTimer(); setInterval(updateTimer, 60000);
+        }
+
+        window.logicSaveEvent = () => {
+            const title = document.getElementById('ev-name').value;
+            const date = document.getElementById('ev-date').value;
+            if(title && date) push(ref(db, 'events_vProf'), { title, date }).then(uiCloseModals);
+        };
+        window.logicDeleteEvent = (id) => remove(ref(db, `events_vProf/${id}`));
+
+        // --- PERFIL AVANZADO ---
+        let pfpImg = document.getElementById('pfp-preview');
+        let currentZoom = 100;
+        window.logicLoadPfp = (input) => {
+            const reader = new FileReader();
+            reader.onload = (e) => { 
+                pfpImg.src = e.target.result; pfpImg.style.top = "0"; pfpImg.style.left = "0"; 
+                currentZoom = 100; document.getElementById('pfp-zoom-slider').value = 100; pfpImg.style.width = "100%";
+            };
+            reader.readAsDataURL(input.files[0]);
+        };
+        window.logicZoomPfp = (val) => { currentZoom = val; pfpImg.style.width = val + "%"; };
+        window.logicSaveProfile = () => {
+            update(ref(db, `profiles/${currentUserId}`), {
+                pfp: pfpImg.src, alias: document.getElementById('pfp-name-input').value || currentUserId,
+                zoom: parseInt(currentZoom), top: parseInt(pfpImg.style.top) || 0, left: parseInt(pfpImg.style.left) || 0
+            }).then(uiCloseModals);
+        };
+        let isDragging = false, sx, sy;
+        pfpImg.onmousedown = (e) => { isDragging = true; sx = e.clientX - pfpImg.offsetLeft; sy = e.clientY - pfpImg.offsetTop; e.preventDefault(); };
+        window.onmousemove = (e) => { if(isDragging) { pfpImg.style.left = (e.clientX - sx) + 'px'; pfpImg.style.top = (e.clientY - sy) + 'px'; }};
+        window.onmouseup = () => isDragging = false;
+
+        // --- UI UI UI ---
+        window.uiSwitchFolder = (folder) => {
+            currentFolder = folder;
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById(`tab-${folder}`).classList.add('active');
+            const isCal = folder === 'calendar';
+            document.getElementById('col-list').style.display = isCal ? 'none' : 'flex';
+            document.getElementById('col-viewer').style.display = isCal ? 'none' : 'flex';
+            document.getElementById('calendar-view').style.display = isCal ? 'block' : 'none';
+            logicRenderStream();
+        };
+
+        window.uiToggleEditor = (open) => {
+            const modal = document.getElementById('editor-modal');
+            if(open) { modal.style.display = 'flex'; setTimeout(() => modal.classList.add('active'), 10); } 
+            else { modal.classList.remove('active'); setTimeout(() => modal.style.display = 'none', 600); }
+        };
+
+        window.uiOpenProfileEditor = () => {
+            const p = profileDbCache[currentUserId] || {};
+            document.getElementById('pfp-name-input').value = p.alias || currentUserId;
+            pfpImg.src = p.pfp || '';
+            currentZoom = p.zoom || 100;
+            pfpImg.style.width = currentZoom + "%";
+            pfpImg.style.top = (p.top || 0) + "px"; pfpImg.style.left = (p.left || 0) + "px";
+            document.getElementById('modal-profile').style.display = 'flex';
+        };
+        window.uiOpenEventEditor = () => document.getElementById('modal-event').style.display = 'flex';
+        window.uiCloseModals = () => document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
+        window.editorCommand = (c) => { document.execCommand(c, false, null); document.getElementById('e-body').focus(); };
+        window.editorHandleAttachment = (input) => {
+            const reader = new FileReader();
+            reader.onload = (e) => { document.execCommand('insertHTML', false, `<br><img src="${e.target.result}" style="max-width:100%; border-radius:15px;"><br>`); };
+            reader.readAsDataURL(input.files[0]);
+        };
+        window.logicApplySearch = (v) => logicRenderStream(v);
+
+        logicSyncProfiles();
+    </script>
 </body>
 </html>
