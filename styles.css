@@ -1,5 +1,5 @@
 /* =========================================
-   1. SISTEMA DE VARIABLES Y TEMAS (CSS)
+   1. SISTEMA DE VARIABLES Y TEMAS
    ========================================= */
 :root {
     --p-bg: rgba(244, 249, 255, 0.72); 
@@ -19,7 +19,7 @@
 }
 
 /* =========================================
-   2. RESET Y FONDO DE PANTALLA INTEGRADO
+   2. RESET Y FONDO
    ========================================= */
 * {
     margin: 0;
@@ -35,7 +35,6 @@ body {
     background-position: center;
     background-attachment: fixed;
     background-repeat: no-repeat;
-    
     color: var(--p-text-main);
     height: 100vh;
     width: 100vw;
@@ -52,7 +51,7 @@ body {
 button { cursor: pointer; border: none; transition: var(--p-transition); }
 
 /* =========================================
-   3. PANTALLA DE ACCESO (GATEKEEPER)
+   3. PANTALLA DE ACCESO
    ========================================= */
 #gatekeeper {
     position: fixed;
@@ -119,9 +118,6 @@ button { cursor: pointer; border: none; transition: var(--p-transition); }
     transition: opacity 0.8s ease;
 }
 
-/* =========================================
-   5. SIDEBAR
-   ========================================= */
 .sidebar {
     border-right: 1px solid var(--p-border);
     display: flex;
@@ -171,7 +167,6 @@ button { cursor: pointer; border: none; transition: var(--p-transition); }
 .btn-compose:hover { background: var(--p-accent-dark); transform: scale(1.02); }
 
 .nav-menu { flex: 1; display: flex; flex-direction: column; gap: 10px; }
-
 .nav-item {
     padding: 16px 20px;
     border-radius: var(--p-radius-sm);
@@ -181,21 +176,116 @@ button { cursor: pointer; border: none; transition: var(--p-transition); }
 }
 
 .nav-item:hover { background: var(--p-accent-soft); }
+.nav-item.active { background: var(--p-white); color: var(--p-accent); font-weight: 700; box-shadow: var(--p-shadow-sm); }
 
-.nav-item.active {
-    background: var(--p-white);
-    color: var(--p-accent);
-    font-weight: 700;
-    box-shadow: var(--p-shadow-sm);
+.badge { background: var(--p-accent); color: white; padding: 4px 10px; border-radius: 20px; font-size: 11px; }
+
+/* =========================================
+   5. MAIL LIST
+   ========================================= */
+.mail-list { border-right: 1px solid var(--p-border); display: flex; flex-direction: column; }
+.list-header { padding: 35px 30px; border-bottom: 1px solid var(--p-border); }
+.search-container input {
+    width: 100%; padding: 15px 20px; border-radius: var(--p-radius-sm);
+    border: 1px solid var(--p-border); background: var(--p-white); outline: none; font-size: 14px;
 }
 
-.badge {
-    background: var(--p-accent);
-    color: white;
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 11px;
+.stream-container { flex: 1; overflow-y: auto; }
+.mail-card {
+    padding: 30px; border-bottom: 1px solid var(--p-border);
+    transition: var(--p-transition); border-left: 0px solid var(--p-accent); position: relative;
 }
+.mail-card:hover { background: rgba(255, 255, 255, 0.4); }
+.mail-card.unread { background: rgba(255, 255, 255, 0.3); border-left-width: 8px; }
+.mail-card.active { background: var(--p-white); }
+
+.btn-delete-item {
+    position: absolute; right: 20px; top: 25px;
+    color: var(--p-danger); background: none; opacity: 0; font-size: 18px;
+}
+.mail-card:hover .btn-delete-item { opacity: 1; }
+
+.card-from { font-weight: 800; font-size: 15px; display: block; margin-bottom: 5px; }
+.card-time { float: right; font-size: 11px; color: var(--p-text-light); font-weight: 400; }
+.card-subject { font-size: 16px; font-weight: 400; color: var(--p-text-main); margin-bottom: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card-preview { font-size: 13px; color: var(--p-text-light); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* =========================================
+   6. VIEWER
+   ========================================= */
+.mail-viewer { display: flex; flex-direction: column; overflow-y: auto; }
+.empty-view {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    justify-content: center; color: var(--p-text-light); gap: 20px;
+}
+
+.viewer-content { display: none; }
+.view-header { padding: 80px 100px; border-bottom: 1px solid var(--p-border); }
+.view-subject { font-size: 42px; font-weight: 200; line-height: 1.2; margin-bottom: 50px; }
+.view-meta { display: flex; align-items: center; gap: 25px; }
+.v-avatar-frame {
+    width: 70px; height: 70px; border-radius: 50%;
+    overflow: hidden; position: relative; border: 4px solid var(--p-white);
+}
+.v-avatar-frame img { position: absolute; width: 100%; }
+.view-body { padding: 80px 100px; font-size: 18px; line-height: 2.4; color: var(--p-text-main); }
+.view-body img { max-width: 100%; border-radius: 20px; margin: 40px 0; box-shadow: var(--p-shadow-lg); }
+
+/* =========================================
+   7. EDITOR
+   ========================================= */
+.editor-modal {
+    position: fixed; bottom: 0; right: 80px; width: 750px; height: 750px;
+    background: var(--p-white); border-radius: 30px 30px 0 0;
+    box-shadow: 0 30px 100px rgba(0,0,0,0.2); display: none;
+    flex-direction: column; border: 1px solid var(--p-border);
+    z-index: 5000; transform: translateY(100%); transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+}
+.editor-modal.active { display: flex; transform: translateY(0); }
+.editor-header {
+    background: var(--p-accent); color: white; padding: 25px 40px;
+    display: flex; justify-content: space-between; align-items: center; border-radius: 30px 30px 0 0;
+}
+
+.toolbar {
+    padding: 15px 30px; background: rgba(250, 252, 255, 0.9);
+    border-bottom: 1px solid var(--p-border); display: flex; gap: 15px; flex-wrap: wrap;
+}
+.tool { padding: 8px 14px; background: white; border: 1px solid var(--p-border); border-radius: 8px; font-size: 13px; font-weight: 600; }
+
+.editor-inputs { padding: 20px 40px; }
+.editor-inputs input { width: 100%; padding: 15px 0; border: none; border-bottom: 1px solid var(--p-border); background: transparent; outline: none; font-size: 16px; }
+.editor-content { flex: 1; padding: 40px; outline: none; overflow-y: auto; font-size: 17px; line-height: 1.8; }
+.editor-footer { padding: 30px 40px; border-top: 1px solid var(--p-border); display: flex; justify-content: flex-end; }
+
+/* =========================================
+   8. CALENDARIO
+   ========================================= */
+#calendar-view { display: none; padding: 60px 100px; flex: 1; overflow-y: auto; }
+.calendar-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; margin-top: 50px; }
+.event-card {
+    background: var(--p-white); padding: 40px; border-radius: var(--p-radius-lg);
+    border: 1px solid var(--p-border); position: relative; box-shadow: var(--p-shadow-sm);
+}
+.countdown-container { display: flex; gap: 15px; margin-top: 30px; }
+.count-box { flex: 1; background: var(--p-white); padding: 15px; border-radius: 15px; text-align: center; box-shadow: var(--p-shadow-sm); }
+.count-val { font-size: 24px; font-weight: 800; color: var(--p-accent); display: block; }
+.count-label { font-size: 10px; text-transform: uppercase; color: var(--p-text-light); }
+
+/* =========================================
+   9. MODALES
+   ========================================= */
+.modal-overlay {
+    position: fixed; inset: 0; background: rgba(173, 201, 235, 0.3);
+    backdrop-filter: blur(10px); z-index: 10000; display: none;
+    align-items: center; justify-content: center;
+}
+.modal-box { background: var(--p-white); width: 500px; border-radius: 30px; box-shadow: var(--p-shadow-lg); overflow: hidden; }
+.profile-adjust-box {
+    width: 250px; height: 250px; border-radius: 50%; overflow: hidden;
+    margin: 30px auto; border: 5px solid var(--p-accent-soft); position: relative; cursor: move;
+}
+#pfp-preview { position: absolute; }
 
 /* SCROLLBARS */
 ::-webkit-scrollbar { width: 8px; }
