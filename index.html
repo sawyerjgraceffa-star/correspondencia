@@ -4,9 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plataforma de Comunicación Avanzada | Seo & Hari</title>
-
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -77,10 +76,7 @@
 
         <section class="mail-viewer" id="col-viewer">
             <div id="view-placeholder" class="empty-view">
-                <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.3">
-                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                    <polyline points="22,6 12,13 2,6"></polyline>
-                </svg>
+                <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.3"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
                 <p>Selecciona una carta para visualizar el contenido completo.</p>
             </div>
 
@@ -100,9 +96,51 @@
         </section>
     </div>
 
-    <!-- MODALES -->
-    <!-- (Aquí están exactamente iguales a tu código original, sin cambios) -->
+    <div class="modal-overlay" id="modal-profile">
+        <div class="modal-box">
+            <div class="editor-header"><span>AJUSTAR PERFIL</span><button onclick="uiCloseModals()" style="color:white; background:none; font-size:20px;">&times;</button></div>
+            <div style="padding:40px; text-align:center;">
+                <input type="text" id="pfp-name-input" placeholder="Tu Nombre/Alias" style="width:100%; padding:12px; margin-bottom:20px; border-radius:10px; border:1px solid var(--p-border); outline:none; text-align:center;">
+                <input type="file" id="pfp-input" accept="image/*" onchange="logicLoadPfp(this)" style="margin-bottom:20px; font-size:12px;">
+                <div class="profile-adjust-box"><img id="pfp-preview" src="" style="width:100%;"></div>
+                <input type="range" id="pfp-zoom-slider" min="50" max="400" value="100" oninput="logicZoomPfp(this.value)" style="width:100%; margin:20px 0;">
+                <button class="btn-compose" style="width:100%; margin:0;" onclick="logicSaveProfile()">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
 
-    <script type="module" src="app.js"></script>
+    <div class="modal-overlay" id="modal-event">
+        <div class="modal-box">
+            <div class="editor-header"><span>NUEVO EVENTO</span><button onclick="uiCloseModals()" style="color:white; background:none; font-size:20px;">&times;</button></div>
+            <div style="padding:40px; display:flex; flex-direction:column; gap:20px;">
+                <input type="text" id="ev-name" placeholder="Título del evento" style="padding:15px; border-radius:10px; border:1px solid var(--p-border);">
+                <input type="date" id="ev-date" style="padding:15px; border-radius:10px; border:1px solid var(--p-border);">
+                <button class="btn-compose" style="margin:0" onclick="logicSaveEvent()">Agendar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="editor-modal" class="editor-modal">
+        <div class="editor-header">
+            <span style="letter-spacing: 2px; text-transform: uppercase; font-size: 12px; font-weight: 800;">Nuevo Mensaje</span>
+            <button onclick="uiToggleEditor(false)" style="background:none; color:white; font-size: 24px;">&times;</button>
+        </div>
+        <div class="toolbar">
+            <button class="tool" onclick="editorCommand('bold')"><b>B</b></button>
+            <button class="tool" onclick="editorCommand('italic')"><i>I</i></button>
+            <button class="tool" onclick="editorCommand('underline')"><u>U</u></button>
+            <button class="tool" onclick="editorCommand('justifyCenter')">Center</button>
+            <button class="tool" onclick="document.getElementById('attach-file').click()">Imagen</button>
+            <input type="file" id="attach-file" style="display:none" accept="image/*" onchange="editorHandleAttachment(this)">
+        </div>
+        <div class="editor-inputs">
+            <input type="text" id="e-target" readonly>
+            <input type="text" id="e-subject" placeholder="Asunto del mensaje">
+        </div>
+        <div id="e-body" class="editor-content" contenteditable="true"></div>
+        <div class="editor-footer"><button class="btn-compose" onclick="logicSendMail()">Enviar Correo</button></div>
+    </div>
+
+    <script type="module" src="script.js"></script>
 </body>
 </html>
