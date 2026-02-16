@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma de Comunicación Avanzada | Seo & Hari</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div id="gatekeeper">
+        <h1 class="gate-title">Bienvenido</h1>
+        <div class="gate-users">
+            <div class="user-selector" onclick="bootSession('seo')">
+                <div class="gate-avatar-frame">
+                    <img id="gate-pfp-seo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" alt="Seo">
+                </div>
+                <span class="gate-name" id="gate-name-seo">Seo</span>
+            </div>
+            <div class="user-selector" onclick="bootSession('hari')">
+                <div class="gate-avatar-frame">
+                    <img id="gate-pfp-hari" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" alt="Hari">
+                </div>
+                <span class="gate-name" id="gate-name-hari">Hari</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="main-container">
+        <aside class="sidebar">
+            <div class="identity-card" onclick="uiOpenProfileEditor()">
+                <div class="pfp-sidebar-frame">
+                    <img id="user-current-pfp" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" alt="Avatar">
+                </div>
+                <div class="info">
+                    <p id="user-current-name">Cargando...</p>
+                    <p>En línea</p>
+                </div>
+            </div>
+
+            <button class="btn-compose" onclick="uiToggleEditor(true)">
+                <span>+</span> Redactar Mensaje
+            </button>
+            <button class="btn-compose" style="background: #a29bfe;" onclick="uiOpenEventEditor()">
+                <span>📅</span> Nuevo Evento
+            </button>
+
+            <nav class="nav-menu">
+                <div class="nav-item active" id="tab-inbox" onclick="uiSwitchFolder('inbox')">
+                    Bandeja de Entrada <span class="badge" id="badge-inbox">0</span>
+                </div>
+                <div class="nav-item" id="tab-sent" onclick="uiSwitchFolder('sent')">Elementos Enviados</div>
+                <div class="nav-item" id="tab-trash" onclick="uiSwitchFolder('trash')">Papelera de Reciclaje</div>
+                <div class="nav-item" id="tab-calendar" onclick="uiSwitchFolder('calendar')">Calendario de Eventos</div>
+            </nav>
+
+            <div style="margin-top: auto; padding-top: 30px;">
+                <button onclick="sessionLogout()" style="color: #ff8080; background: none; font-size: 13px; font-weight: 600;">Cerrar sesión de seguridad</button>
+            </div>
+        </aside>
+
+        <section class="mail-list" id="col-list">
+            <div class="list-header">
+                <div class="search-container">
+                    <input type="text" id="mail-search" placeholder="Buscar por asunto o remitente..." oninput="logicApplySearch(this.value)">
+                </div>
+            </div>
+            <div class="stream-container" id="stream-render"></div>
+        </section>
+
+        <section id="calendar-view">
+            <h1 style="font-weight: 200; font-size: 42px;">Próximas Fechas</h1>
+            <div class="calendar-grid" id="calendar-render"></div>
+        </section>
+
+        <section class="mail-viewer" id="col-viewer">
+            <div id="view-placeholder" class="empty-view">
+                <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.3">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                    <polyline points="22,6 12,13 2,6"></polyline>
+                </svg>
+                <p>Selecciona una carta para visualizar el contenido completo.</p>
+            </div>
+
+            <div id="view-active" class="viewer-content">
+                <div class="view-header">
+                    <h1 class="view-subject" id="v-subject"></h1>
+                    <div class="view-meta">
+                        <div class="v-avatar-frame"><img id="v-avatar" src=""></div>
+                        <div>
+                            <p id="v-sender" style="font-weight: 800; font-size: 16px;"></p>
+                            <p id="v-date" style="font-size: 13px; color: var(--p-text-light);"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="view-body" id="v-body"></div>
+            </div>
+        </section>
+    </div>
+
+    <div class="modal-overlay" id="modal-profile">
+        <div class="modal-box">
+            <div class="editor-header">
+                <span>AJUSTAR PERFIL</span>
+                <button onclick="uiCloseModals()" style="color:white; background:none; font-size:20px;">&times;</button>
+            </div>
+            <div style="padding:40px; text-align:center;">
+                <input type="text" id="pfp-name-input" placeholder="Tu Nombre/Alias" style="width:100%; padding:12px; margin-bottom:20px; border-radius:10px; border:1px solid var(--p-border); outline:none; text-align:center;">
+                <input type="file" id="pfp-input" accept="image/*" onchange="logicLoadPfp(this)" style="margin-bottom:20px; font-size:12px;">
+                <div class="profile-adjust-box">
+                    <img id="pfp-preview" src="" style="width:100%;">
+                </div>
+                <input type="range" id="pfp-zoom-slider" min="50" max="400" value="100" oninput="logicZoomPfp(this.value)" style="width:100%; margin:20px 0;">
+                <button class="btn-compose" style="width:100%; margin:0;" onclick="logicSaveProfile()">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-event">
+        <div class="modal-box">
+            <div class="editor-header">
+                <span>NUEVO EVENTO</span>
+                <button onclick="uiCloseModals()" style="color:white; background:none; font-size:20px;">&times;</button>
+            </div>
+            <div style="padding:40px; display:flex; flex-direction:column; gap:20px;">
+                <input type="text" id="ev-name" placeholder="Título del evento" style="padding:15px; border-radius:10px; border:1px solid var(--p-border);">
+                <input type="date" id="ev-date" style="padding:15px; border-radius:10px; border:1px solid var(--p-border);">
+                <button class="btn-compose" style="margin:0" onclick="logicSaveEvent()">Agendar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="editor-modal" class="editor-modal">
+        <div class="editor-header">
+            <span style="letter-spacing: 2px; text-transform: uppercase; font-size: 12px; font-weight: 800;">Nuevo Mensaje</span>
+            <button onclick="uiToggleEditor(false)" style="background:none; color:white; font-size: 24px;">&times;</button>
+        </div>
+        <div class="toolbar">
+            <button class="tool" onclick="editorCommand('bold')"><b>B</b></button>
+            <button class="tool" onclick="editorCommand('italic')"><i>I</i></button>
+            <button class="tool" onclick="editorCommand('underline')"><u>U</u></button>
+            <button class="tool" onclick="editorCommand('justifyCenter')">Center</button>
+            <button class="tool" onclick="document.getElementById('attach-file').click()">Imagen</button>
+            <input type="file" id="attach-file" style="display:none" accept="image/*" onchange="editorHandleAttachment(this)">
+        </div>
+        <div class="editor-inputs">
+            <input type="text" id="e-target" readonly>
+            <input type="text" id="e-subject" placeholder="Asunto del mensaje">
+        </div>
+        <div id="e-body" class="editor-content" contenteditable="true"></div>
+        <div class="editor-footer">
+            <button class="btn-compose" onclick="logicSendMail()">Enviar Correo</button>
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
